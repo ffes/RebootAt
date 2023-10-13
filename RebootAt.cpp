@@ -82,11 +82,12 @@ static bool ElevatePrivileges()
  * Reboot the system
  *
  * @param secs The number of seconds before the reboot should occur
- * @param msg  The message to display in the system popup
+ * @param msg The message to display in the system popup
+ * @param force All sessions are forcefully logged off
  *
  * @return Returns `true` if reboot was passed to the OS successful
  */
-static bool Reboot(DWORD secs, std::wstring msg)
+static bool Reboot(DWORD secs, std::wstring msg, bool force)
 {
 	if (!ElevatePrivileges())
 		return false;
@@ -94,8 +95,9 @@ static bool Reboot(DWORD secs, std::wstring msg)
 	DWORD dwFlags = SHUTDOWN_RESTART;
 	DWORD dwReason = SHTDN_REASON_MAJOR_OTHER | SHTDN_REASON_FLAG_PLANNED;
 
-	// Force
-	dwFlags |= SHUTDOWN_FORCE_OTHERS | SHUTDOWN_FORCE_SELF;
+	// Force the reboot
+	if (force)
+		dwFlags |= SHUTDOWN_FORCE_OTHERS | SHUTDOWN_FORCE_SELF;
 
 	// Display the message
 	std::wcout << msg.c_str() << std::endl;
@@ -109,7 +111,7 @@ int main(int argc, char * argv[])
 {
 	std::wstring msg = L"Rebooting in an hour";
 
-	if (Reboot(3600, msg))
+	if (Reboot(3600, msg, true))
 		return 0;
 	return 1;
 }
