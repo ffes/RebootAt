@@ -7,6 +7,7 @@ But with the introduction of WSL and especially WSL2 I stopped using it.
 
 One of the Cygwin tools I used often on our servers at the office was the `shutdown` command.
 Yes, Windows has a pretty decent `shutdown.exe` but the major advantage of the Cygwin `shutdown` is that it mimics the Linux `shutdown` command, especially the possibility to add a timestamp at the end.
+And another minor disadvantage of `shutdown.exe` is that when you use the wrong command line options you could shutdown the machine instead of rebooting it.
 
 ```
 shutdown -fri 23:30
@@ -24,15 +25,31 @@ And since some of the code has been reused, I will obviously release this with t
 
 ## Usage
 
-This command line tool reboot you machine at a given time
+This command line tool reboot you machine at a given time.
 
-The tool can take a couple of arguments.
-The `time` argument is required.
+The tool takes just one argument, a timestamp when the computer needs to reboot.
+
+The word `now` (case insensitive) means just that, reboot immediately.
+
+```sh
+# Reboot immediately
+RebootAt now
+```
+
+A timestamp means to reboot at the first time this time will occur.
+The timestamp has to be in 24-hours notation.
 
 ```
+# Reboot today at 23:30
 RebootAt 23:30
+
+# Reboot tomorrow at 2:00
+RebootAt 2:00
 ```
 
-```
-RebootAt -f now
+`+` means the number following is in minutes.
+
+```sh
+# Reboot in 60 minutes
+RebootAt +60
 ```
