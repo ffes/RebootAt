@@ -93,18 +93,25 @@ static bool Reboot(DWORD secs, std::wstring msg, bool force)
 	if (!ElevatePrivileges())
 		return false;
 
+	// The system needs to be rebooted
 	DWORD dwFlags = SHUTDOWN_RESTART;
-	DWORD dwReason = SHTDN_REASON_MAJOR_OTHER | SHTDN_REASON_FLAG_PLANNED;
 
 	// Force the reboot
 	if (force)
 		dwFlags |= SHUTDOWN_FORCE_OTHERS | SHUTDOWN_FORCE_SELF;
 
+	// Make sure updates are installed
+	dwFlags |= SHUTDOWN_INSTALL_UPDATES;
+
+	// Put the Rebooting in front of the message
+	msg = L"System will reboot " + msg;
+
 	// Display the message
 	std::wcout << msg.c_str() << std::endl;
 
 	// Perform the reboot itself
-	DWORD ret = InitiateShutdown(NULL, (LPWSTR) msg.c_str(), secs, dwFlags, dwReason);
+	const DWORD dwReason = SHTDN_REASON_MAJOR_OTHER | SHTDN_REASON_FLAG_PLANNED;
+	const DWORD ret = InitiateShutdown(NULL, (LPWSTR) msg.c_str(), secs, dwFlags, dwReason);
 	return ret == ERROR_SUCCESS;
 }
 
@@ -199,7 +206,7 @@ int main(int argc, char * argv[])
 	}
 
 	// Try to perform the reboot
-	if (Reboot(secs, L"Rebooting " + timemsg, true))
+	if (Reboot(secs, timemsg, true))
 		return 0;
 	return 1;
 }
