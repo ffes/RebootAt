@@ -37,7 +37,8 @@ function create_version_git_h()
 	# Get additional version info from git
 	echo "Retrieving additional version information from git..."
 	VERSION=$(git describe --tags --abbrev=0 | grep -oP '\d+\.\d+\.\d+')
-	VERSION_NUMBERS=$(echo $VERSION | tr "." ","),0
+	COUNT=$(git rev-list --count HEAD)
+	VERSION_NUMBERS=$(echo $VERSION | tr "." ","),$COUNT
 	YEAR=$(date +%Y)
 
 	echo "Generating version-git.h..."
